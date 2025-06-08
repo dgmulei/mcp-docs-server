@@ -1,138 +1,200 @@
 # MCP Documentation Server
 
-An MCP server providing structured access to complete Model Context Protocol documentation, working examples, and troubleshooting guides for AI coding assistants.
+An MCP server providing structured access to Model Context Protocol documentation, examples, and troubleshooting guides for AI coding assistants.
 
 ## Purpose
 
-Bridges the gap between MCP specifications and working implementations by providing real-time access to:
-- Complete MCP documentation with proper categorization
-- Working code examples from proven implementations  
-- Troubleshooting guides for common connection failures
+This server bridges the gap between MCP specifications and working implementations by providing AI coding assistants with:
+
+- Real-time access to complete MCP documentation
+- Working code examples from proven implementations
+- Troubleshooting guides for common issues
 - Validation tools for compliance checking
 
-## Quick Start
+## Tools
 
+- `search_mcp_docs` - Search across all documentation
+- `get_transport_examples` - SSE vs Streamable HTTP examples
+- `troubleshoot_connection` - Debug common connection failures
+- `validate_oauth_flow` - Check OAuth implementation compliance
+- `get_working_templates` - Get proven server templates
+
+## Setup
+
+1. Install dependencies:
 ```bash
-git clone https://github.com/dgmulei/mcp-docs-server.git
-cd mcp-docs-server
 npm install
+```
+
+2. Prepare documentation:
+```bash
+npm run prepare-docs
+```
+
+3. Build and run:
+```bash
 npm run build
 npm start
 ```
 
-## Tools Available
+4. For development:
+```bash
+npm run dev
+```
 
-- `search_mcp_docs` - Search across all documentation and examples
-- `get_transport_examples` - Get SSE vs Streamable HTTP implementation code
-- `troubleshoot_connection` - Debug "Claude won't connect" and other failures
-- `validate_oauth_flow` - Check OAuth 2.1 implementation compliance
-- `get_working_templates` - Access proven server templates (Cloudflare, etc.)
+## Configuration
 
-## Claude Desktop Integration
+Add to your `claude_desktop_config.json`:
 
-Add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
     "mcp-docs": {
       "command": "node",
-      "args": ["/absolute/path/to/mcp-docs-server/dist/index.js"]
+      "args": ["/path/to/mcp-docs-server/dist/index.js"]
     }
   }
 }
 ```
 
+## Data Structure
+
+Documentation is organized in the `data/` directory:
+
+- `specifications/` - Official MCP specs
+- `implementations/` - Working code examples
+- `troubleshooting/` - Problem-solution mappings
+- `examples/` - Templates and guides
+
 ## Testing
 
+Test with MCP Inspector:
 ```bash
-# Test with MCP Inspector
 npx @modelcontextprotocol/inspector node dist/index.js
-
-# Test search functionality
-# Use "search_mcp_docs" tool with query: "SSE transport claude"
-# Use "troubleshoot_connection" tool with error: "Claude was unable to connect"
 ```
 
 ## Updating Documentation
 
-### 1. Monitor Sources
-Set up monitoring for new MCP documentation:
+### 1. Monitor Documentation Sources
+
+Set up monitoring for MCP documentation updates:
 
 ```bash
-# Watch official spec changes
+# Official specification repository
 git clone https://github.com/modelcontextprotocol/specification.git
-cd specification && git pull  # Check periodically
 
-# Monitor SDK examples
+# TypeScript SDK examples
 git clone https://github.com/modelcontextprotocol/typescript-sdk.git
+
+# Python SDK examples  
 git clone https://github.com/modelcontextprotocol/python-sdk.git
+
+# Check for updates periodically
+cd specification && git pull
+cd typescript-sdk && git pull
+cd python-sdk && git pull
 ```
 
-### 2. Add New Documentation
+### 2. Adding New Documentation
+
 ```bash
-# Add new .md files to appropriate directories
-cp new-spec.md data/specifications/
-cp new-example.md data/examples/  
+# Copy new files to appropriate directories
+cp new-specification.md data/specifications/
+cp new-example.md data/examples/
 cp troubleshooting-guide.md data/troubleshooting/
 
-# Rebuild and restart
+# Restart server to load new content
 npm run build
 npm start
 ```
 
-### 3. Frontmatter Format
-Add frontmatter to new files for better categorization:
+### 3. File Format
+
+Use frontmatter for better categorization:
+
 ```markdown
 ---
 title: "Document Title"
 tags: ["oauth", "transport", "debugging"]
-category: "specification"  # or "examples", "troubleshooting", "implementation"
+category: "specification"
 ---
+
+# Document Content
 ```
 
-### 4. Automated Updates (Future)
+Categories: `specification`, `implementation`, `troubleshooting`, `examples`
+
+### 4. Automated Updates (Future Enhancement)
+
 Consider implementing:
 - GitHub webhooks to monitor spec repository changes
 - Scheduled jobs to fetch latest SDK examples
 - Version detection for schema.ts changes
+- Automated categorization based on content analysis
 
 ## SDK Integration Strategy
 
-### Current Approach
-Direct users to official SDK examples when they need implementation details:
+### Current Workflow
 
-**TypeScript SDK**: https://github.com/modelcontextprotocol/typescript-sdk/tree/main/src/examples/server
-
-**Python SDK**: https://github.com/modelcontextprotocol/python-sdk/tree/main/examples/servers
-
-### Usage Pattern
-1. **Use this server first** for understanding requirements and debugging
-2. **Reference SDK examples** for specific implementation patterns
+1. **Use this server first** for understanding MCP requirements and debugging
+2. **Reference SDK repositories** for specific implementation patterns:
+   - **TypeScript**: https://github.com/modelcontextprotocol/typescript-sdk/tree/main/src/examples/server
+   - **Python**: https://github.com/modelcontextprotocol/python-sdk/tree/main/examples/servers
 3. **Return to this server** for troubleshooting and validation
 
-### SDK-Specific Queries
-When users need SDK code:
-- Use `get_transport_examples` tool to get transport implementation patterns
-- Direct to appropriate SDK repository for complete working examples
-- Use `troubleshoot_connection` for debugging SDK implementation issues
+### When to Use Each Resource
 
-## Architecture
+**This Documentation Server:**
+- Understanding Claude's specific requirements (SSE transport, OAuth 2.1, Dynamic Client Registration)
+- Debugging connection failures ("Claude was unable to connect")
+- Validating OAuth flow implementation
+- Finding working templates (Cloudflare, SimpleScraper examples)
+- Learning MCP fundamentals and architecture
 
-```
-data/
-├── specifications/     # Official MCP specs and auth requirements
-├── examples/          # Working server templates (Cloudflare, SimpleScraper)
-├── implementations/   # Claude-specific requirements and patterns  
-├── troubleshooting/   # Debugging guides and Inspector usage
-└── README.md
-```
+**SDK Repositories:**
+- Complete working server implementations
+- Transport layer code (SSEServerTransport, StreamableHTTPServerTransport)
+- Tool definition patterns and best practices
+- Authentication implementation details
+- Error handling and protocol compliance examples
+
+### Recommendation for AI Assistants
+
+When helping users implement MCP servers:
+
+1. **Start with requirements**: Use `search_mcp_docs` and `troubleshoot_connection` tools from this server
+2. **Get implementation patterns**: Direct users to appropriate SDK examples for their language
+3. **Debug issues**: Use this server's troubleshooting tools and guides
+4. **Validate compliance**: Use `validate_oauth_flow` and other validation tools
 
 ## Contributing
 
-To add documentation:
-1. Place .md files in appropriate `data/` subdirectory
-2. Include descriptive frontmatter
-3. Restart server to load new content
-4. Test search functionality with new content
+To add new documentation:
 
-Documentation is automatically categorized, indexed, and made searchable through the MCP tools.
+1. Place markdown files in appropriate `data/` subdirectory
+2. Use descriptive filenames and include frontmatter
+3. Run `npm run prepare-docs` to rebuild index (if script exists)
+4. Restart the server to load new files
+
+Documentation will be automatically categorized and indexed for search and retrieval.
+
+## Architecture
+
+The server automatically:
+- Loads all `.md` files from `data/` subdirectories
+- Categorizes based on folder structure and frontmatter
+- Builds searchable index with Fuse.js
+- Provides structured access via MCP tools
+
+File categorization logic:
+- `/specifications/` or contains "authorization", "spec" → `specification`
+- `/troubleshooting/` or contains "troubleshoot", "debug" → `troubleshooting`  
+- `/examples/` or contains "example", "cloudflare", "simplescraper" → `examples`
+- Default → `implementation`
+
+## Development Notes
+
+- Documentation is loaded on server startup (restart required for new files)
+- Search uses fuzzy matching across title, content, tags, and category
+- Tools provide structured access optimized for AI assistant consumption
+- Session management handles multiple concurrent documentation queries
